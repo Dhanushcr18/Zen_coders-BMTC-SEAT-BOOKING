@@ -1,0 +1,15 @@
+# BMTC AI Seat Scanner — Python requirements
+# Install: pip install -r requirements.txt
+
+# Core
+flask>=3.0.0
+flask-cors>=4.0.0
+opencv-python>=4.8.0
+requests>=2.31.0
+numpy>=1.24.0
+
+# AI (auto-downloads yolov8n.pt on first run)
+ultralytics>=8.0.0
+
+# Optional — comment out if no GPU
+# torch>=2.0.0

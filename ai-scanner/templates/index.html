@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BMTC AI Seat Scanner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0c0c12;
+            --surface: #13131c;
+            --card: #1a1a28;
+            --border: rgba(255, 255, 255, 0.07);
+            --gold: #c9a84c;
+            --gold2: #f5d98a;
+            --green: #5edc8a;
+            --red: #ff5f5f;
+            --blue: #5b9cf6;
+            --purple: #a78bfa;
+            --text: #f0ead6;
+            --muted: #6e6e8a;
+            --radius: 14px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* ── Layout ── */
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .main {
+            padding: 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ── Header ── */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #a07020, var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--gold);
+        }
+
+        .logo-text span {
+            color: var(--muted);
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+        }
+
+        .pill-green {
+            background: rgba(94, 220, 138, 0.12);
+            border: 1px solid rgba(94, 220, 138, 0.3);
+            color: var(--green);
+        }
+
+        .pill-gold {
+            background: rgba(201, 168, 76, 0.12);
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            color: var(--gold);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pill-blue {
+            background: rgba(91, 156, 246, 0.15);
+            border: 1px solid rgba(91, 156, 246, 0.35);
+            color: var(--blue);
+        }
+
+        .pill-camera {
+            background: rgba(94, 220, 138, 0.15);
+            border: 1px solid rgba(94, 220, 138, 0.35);
+            color: var(--green);
+        }
+
+        .pill-upload {
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.35);
+            color: var(--purple);
+        }
+
+        .pill-video {
+            background: rgba(201, 168, 76, 0.15);
+            border: 1px solid rgba(201, 168, 76, 0.35);
+            color: var(--gold);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 1.4s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .3
+            }
+        }
+
+        .time-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+        }
+
+        .card-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        /* ── Stat grid ── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .stat-val {
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .stat-lbl {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        /* ── Bar ── */
+        .bar-wrap {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 5px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width .8s ease, background .4s;
+        }
+
+        /* ── Bus Seat Map ── */
+        .bus-map-outer {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 8px;
+        }
+
+        /* column headers */
+        .bus-col-header {
+            display: grid;
+            grid-template-columns: 18px 1fr 1fr 16px 1fr 1fr;
+            gap: 3px;
+            margin-bottom: 4px;
+        }
+
+        .bus-col-header>span {
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        /* row: row-num + 2 seats + aisle + 2 seats */
+        .bus-row {
+            display: grid;
+            grid-template-columns: 18px 1fr 1fr 16px 1fr 1fr;
+            gap: 3px;
+            margin-bottom: 3px;
+        }
+
+        .row-num {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .aisle-gap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: rgba(255, 255, 255, 0.12);
+        }
+
+        .seat {
+            border-radius: 5px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s;
+            cursor: default;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            user-select: none;
+        }
+
+        .seat:hover {
+            transform: scale(1.10);
+            z-index: 1;
+        }
+
+        .seat.free {
+            background: rgba(94, 220, 138, 0.10);
+            color: var(--green);
+            border-color: rgba(94, 220, 138, 0.22);
+        }
+
+        .seat.occupied {
+            background: rgba(255, 95, 95, 0.16);
+            color: var(--red);
+            border-color: rgba(255, 95, 95, 0.32);
+        }
+
+        .seat .conf-badge {
+            font-size: 6px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* legend */
+        .seat-legend {
+            display: flex;
+            gap: 12px;
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .seat-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .leg-sq {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        /* ── Action buttons ── */
+        .action-row {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 7px 13px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .action-btn.green {
+            background: rgba(94, 220, 138, 0.14);
+            border-color: rgba(94, 220, 138, 0.35);
+            color: var(--green);
+        }
+
+        .action-btn.green:hover {
+            background: rgba(94, 220, 138, 0.28);
+        }
+
+        .action-btn.blue {
+            background: rgba(91, 156, 246, 0.14);
+            border-color: rgba(91, 156, 246, 0.35);
+            color: var(--blue);
+        }
+
+        .action-btn.blue:hover {
+            background: rgba(91, 156, 246, 0.28);
+        }
+
+        .action-btn.purple {
+            background: rgba(167, 139, 250, 0.14);
+            border-color: rgba(167, 139, 250, 0.35);
+            color: var(--purple);
+        }
+
+        .action-btn.purple:hover {
+            background: rgba(167, 139, 250, 0.28);
+        }
+
+        .action-btn.gold {
+            background: rgba(201, 168, 76, 0.14);
+            border-color: rgba(201, 168, 76, 0.35);
+            color: var(--gold);
+        }
+
+        .action-btn.gold:hover {
+            background: rgba(201, 168, 76, 0.28);
+        }
+
+        .action-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        /* ── Fleet DB list ── */
+        .buses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .db-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 8px 11px;
+        }
+
+        .db-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .db-route {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .db-occ {
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* ── Source panel ── */
+        .source-panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+        }
+
+        .src-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .src-tab {
+            flex: 1;
+            padding: 7px 5px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all .2s;
+        }
+
+        .src-tab:hover {
+            border-color: rgba(255, 255, 255, .2);
+            color: var(--text);
+        }
+
+        .src-tab.active-demo {
+            background: rgba(91, 156, 246, .18);
+            border-color: rgba(91, 156, 246, .45);
+            color: var(--blue);
+        }
+
+        .src-tab.active-camera {
+            background: rgba(94, 220, 138, .18);
+            border-color: rgba(94, 220, 138, .45);
+            color: var(--green);
+        }
+
+        .src-tab.active-upload {
+            background: rgba(167, 139, 250, .18);
+            border-color: rgba(167, 139, 250, .45);
+            color: var(--purple);
+        }
+
+        .src-content {
+            display: none;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .src-content.visible {
+            display: flex;
+        }
+
+        .src-row {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
+        .src-input {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            color: var(--text);
+            font-size: 11px;
+            padding: 7px 9px;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .src-input:focus {
+            border-color: var(--blue);
+        }
+
+        .src-input[type="number"] {
+            width: 64px;
+            flex: none;
+        }
+
+        .src-hint {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* Upload area */
+        .upload-drop {
+            border: 2px dashed rgba(167, 139, 250, 0.35);
+            border-radius: 9px;
+            padding: 18px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s;
+            position: relative;
+            background: rgba(167, 139, 250, 0.05);
+        }
+
+        .upload-drop:hover,
+        .upload-drop.dragover {
+            border-color: var(--purple);
+            background: rgba(167, 139, 250, 0.12);
+        }
+
+        .upload-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .upload-drop .u-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .upload-drop .u-hint {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .upload-drop .u-hint strong {
+            color: var(--purple);
+        }
+
+        .upload-progress {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .upload-progress.visible {
+            display: flex;
+        }
+
+        .prog-wrap {
+            background: rgba(255, 255, 255, .06);
+            border-radius: 4px;
+            height: 5px;
+            overflow: hidden;
+        }
+
+        .prog-bar {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--purple);
+            width: 0%;
+            transition: width .3s;
+        }
+
+        .prog-lbl {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* ── Video ── */
+        .video-wrap {
+            background: #000;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+            flex: 1;
+            min-height: 340px;
+        }
+
+        .video-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .v-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 5px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ── Log ── */
+        #log {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 13px;
+            height: 90px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .log-line {
+            line-height: 1.8;
+        }
+
+        .log-line .ts {
+            color: var(--gold);
+            margin-right: 7px;
+        }
+
+        .log-line .ok {
+            color: var(--green);
+        }
+
+        .log-line .warn {
+            color: var(--red);
+        }
+
+        .log-line .info {
+            color: var(--blue);
+        }
+
+        .log-line .uclr {
+            color: var(--purple);
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .1);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🚌</div>
+                <div class="logo-text">BMTC AI Scanner <span>/ Seat Occupancy</span></div>
+            </div>
+            <div class="header-right">
+                <div class="time-badge" id="clock">--:--:--</div>
+                <div class="time-badge" id="fps-badge" style="color:var(--gold)">-- FPS</div>
+                <div class="pill pill-blue" id="source-pill">
+                    <div class="dot"></div><span id="source-label">DEMO</span>
+                </div>
+                <div class="pill pill-gold" id="bus-badge">{{ bus_id }}</div>
+                <div class="pill pill-green" id="status-pill">
+                    <div class="dot"></div><span id="status-text">{{ 'DEMO' if demo else 'LIVE' }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <!-- Stats -->
+            <div class="card">
+                <div class="card-title">Seat Occupancy</div>
+                <div class="stat-grid">
+                    <div class="stat">
+                        <div class="stat-val" id="s-occupied" style="color:var(--red)">–</div>
+                        <div class="stat-lbl">Occupied</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-val" id="s-free" style="color:var(--green)">–</div>
+                        <div class="stat-lbl">Available</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-val" id="s-total" style="color:var(--gold)">–</div>
+                        <div class="stat-lbl">Total</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-val" id="s-pct" style="color:var(--blue)">–%</div>
+                        <div class="stat-lbl">Load</div>
+                    </div>
+                </div>
+                <div class="bar-wrap" style="margin-top:10px">
+                    <div class="bar-fill" id="occ-bar" style="width:0%;background:var(--green)"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--muted)">
+                    <span>0%</span><span id="occ-lbl">0%</span><span>100%</span>
+                </div>
+            </div>
+
+            <!-- Bus Seat Map -->
+            <div class="card" style="padding:12px 10px">
+                <div class="card-title">Bus Seat Map — 36 seats</div>
+                <div class="bus-map-outer">
+                    <!-- Column headers -->
+                    <div class="bus-col-header">
+                        <span></span>
+                        <span style="color:var(--blue)">A</span>
+                        <span style="color:var(--blue)">B</span>
+                        <span>|</span>
+                        <span style="color:var(--blue)">C</span>
+                        <span style="color:var(--blue)">D</span>
+                    </div>
+                    <!-- Rows 1-9 -->
+                    <div id="bus-seat-rows"></div>
+                </div>
+                <div class="seat-legend">
+                    <span>
+                        <div class="leg-sq" style="background:rgba(94,220,138,0.5)"></div>Free
+                    </span>
+                    <span>
+                        <div class="leg-sq" style="background:rgba(255,95,95,0.5)"></div>Occupied
+                    </span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card">
+                <div class="card-title">Actions</div>
+                <div class="action-row">
+                    <button class="action-btn green" onclick="doSnapshot()" id="btn-snap">📸 Snapshot</button>
+                    <button class="action-btn gold" onclick="doExport()">⬇ Export CSV</button>
+                </div>
+            </div>
+
+            <!-- Fleet DB -->
+            <div class="card">
+                <div class="card-title">Fleet Database</div>
+                <div class="buses-list" id="buses-list">
+                    <div style="color:var(--muted);font-size:11px">Loading…</div>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <!-- Source Control -->
+            <div class="source-panel">
+                <div class="card-title" style="margin-bottom:9px">📡 Video Source</div>
+                <div class="src-tabs">
+                    <div class="src-tab active-demo" id="tab-demo" onclick="showTab('demo')">🎭 Demo</div>
+                    <div class="src-tab" id="tab-camera" onclick="showTab('camera')">📷 Live Cam</div>
+                    <div class="src-tab" id="tab-upload" onclick="showTab('upload')">📤 Upload</div>
+                </div>
+
+                <!-- Demo -->
+                <div class="src-content visible" id="content-demo">
+                    <div class="src-hint">Running in <strong style="color:var(--blue)">Demo Mode</strong> — seats
+                        simulated, no camera needed.</div>
+                    <div class="src-row">
+                        <button class="action-btn blue" id="btn-demo" onclick="switchToDemo()">⚡ Activate Demo
+                            Mode</button>
+                    </div>
+                </div>
+
+                <!-- Camera -->
+                <div class="src-content" id="content-camera">
+                    <div class="src-hint">Connect a <strong style="color:var(--green)">live camera</strong> for
+                        real-time YOLO seat detection. Camera index 0 = default webcam.</div>
+                    <div class="src-row">
+                        <label class="src-hint" style="white-space:nowrap">Camera</label>
+                        <input type="number" class="src-input" id="cam-index" value="0" min="0" max="9" />
+                        <button class="action-btn green" id="btn-camera" onclick="switchToCamera()">▶ Start
+                            Live</button>
+                    </div>
+                </div>
+
+                <!-- Upload -->
+                <div class="src-content" id="content-upload">
+                    <div class="upload-drop" id="upload-drop">
+                        <input type="file" id="video-file-input"
+                            accept="video/mp4,video/avi,video/quicktime,video/x-matroska,video/webm"
+                            onchange="handleFileSelect(this.files[0])" />
+                        <div class="u-icon">🎬</div>
+                        <div style="font-size:12px;font-weight:700;margin-bottom:3px">Drop video here</div>
+                        <div class="u-hint">or <strong>click to browse</strong> — MP4, AVI, MOV, MKV, WebM (max 500 MB)
+                        </div>
+                    </div>
+                    <div class="upload-progress" id="upload-progress">
+                        <div class="prog-lbl" id="prog-label">Uploading…</div>
+                        <div class="prog-wrap">
+                            <div class="prog-bar" id="prog-bar"></div>
+                        </div>
+                    </div>
+                    <div class="src-row" id="upload-file-info" style="display:none">
+                        <div style="flex:1;font-size:11px;color:var(--purple);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                            id="upload-filename"></div>
+                        <button class="action-btn purple" id="btn-upload" onclick="uploadVideo()">▶ Scan Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live feed -->
+            <div class="video-wrap" id="video-wrap">
+                <img src="/video_feed" alt="Live Camera Feed" id="video-feed" />
+                <div class="video-overlay">
+                    <div class="v-badge" id="mode-badge"
+                        style="background:rgba(91,156,246,0.3);color:var(--blue);border:1px solid rgba(91,156,246,0.4)">
+                        ● DEMO</div>
+                    <div class="v-badge"
+                        style="background:rgba(0,0,0,0.5);color:var(--muted);border:1px solid rgba(255,255,255,0.1)"
+                        id="yolo-badge">AI ON</div>
+                </div>
+            </div>
+
+            <!-- Log -->
+            <div>
+                <div class="card-title" style="margin-bottom:5px">Event Log</div>
+                <div id="log"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ── Constants ───────────────────────────────────────────────────────────────
+        const ROWS = 9;
+        const COLS = ['A', 'B', 'C', 'D'];
+        const ALL_SEATS = [];
+        for (let r = 1; r <= ROWS; r++) COLS.forEach(c => ALL_SEATS.push(`${r}${c}`));
+
+        // ── Build bus seat map ───────────────────────────────────────────────────────
+        (function buildSeatMap() {
+            const container = document.getElementById('bus-seat-rows');
+            for (let r = 1; r <= ROWS; r++) {
+                const row = document.createElement('div');
+                row.className = 'bus-row';
+
+                // row number
+                const rn = document.createElement('div');
+                rn.className = 'row-num';
+                rn.textContent = r;
+                row.appendChild(rn);
+
+                // 4 seats with aisle gap between B and C
+                COLS.forEach((col, ci) => {
+                    if (ci === 2) {
+                        // aisle
+                        const aisle = document.createElement('div');
+                        aisle.className = 'aisle-gap';
+                        aisle.innerHTML = '│';
+                        row.appendChild(aisle);
+                    }
+                    const sid = `${r}${col}`;
+                    const el = document.createElement('div');
+                    el.className = 'seat free';
+                    el.id = 'seat-' + sid;
+                    el.title = `Seat ${sid}`;
+                    el.innerHTML = `<span>${sid}</span><span class="conf-badge" id="conf-${sid}"></span>`;
+                    row.appendChild(el);
+                });
+
+                container.appendChild(row);
+            }
+        })();
+
+        // ── Clock ────────────────────────────────────────────────────────────────────
+        setInterval(() => {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+
+        // ── Logger ───────────────────────────────────────────────────────────────────
+        function log(msg, type = 'ok') {
+            const d = document.getElementById('log');
+            const ts = new Date().toLocaleTimeString('en-GB');
+            d.innerHTML += `<div class="log-line"><span class="ts">${ts}</span><span class="${type}">${msg}</span></div>`;
+            d.scrollTop = d.scrollHeight;
+            while (d.children.length > 80) d.removeChild(d.firstChild);
+        }
+
+        // ── Update seats ─────────────────────────────────────────────────────────────
+        function updateSeats(seats, confs) {
+            for (const [id, status] of Object.entries(seats)) {
+                const el = document.getElementById('seat-' + id);
+                const conf = document.getElementById('conf-' + id);
+                if (el) {
+                    el.className = 'seat ' + (status === 'occupied' ? 'occupied' : 'free');
+                }
+                if (conf && confs) {
+                    const c = confs[id] || 0;
+                    conf.textContent = (status === 'occupied' && c > 0) ? `${Math.round(c * 100)}%` : '';
+                }
+            }
+        }
+
+        // ── Update stats ─────────────────────────────────────────────────────────────
+        function updateStats(data) {
+            document.getElementById('s-occupied').textContent = data.occupied;
+            document.getElementById('s-free').textContent = data.free;
+            document.getElementById('s-total').textContent = data.total;
+            document.getElementById('s-pct').textContent = data.pct + '%';
+
+            const bar = document.getElementById('occ-bar');
+            bar.style.width = data.pct + '%';
+            bar.style.background = data.pct > 80 ? 'var(--red)' : data.pct > 55 ? 'var(--gold)' : 'var(--green)';
+            document.getElementById('occ-lbl').textContent = data.pct + '%';
+
+            if (data.seats) updateSeats(data.seats, data.confs || {});
+            if (data.fps !== undefined)
+                document.getElementById('fps-badge').textContent = data.fps + ' FPS';
+            if (data.source) updateSourceUI(data.source);
+        }
+
+        // ── Source UI ─────────────────────────────────────────────────────────────────
+        const SRC_META = {
+            demo: { label: '● DEMO', pillCls: 'pill-blue', badgeTxt: '● DEMO', badgeStyle: 'background:rgba(91,156,246,0.3);color:var(--blue);border:1px solid rgba(91,156,246,0.4)' },
+            camera: { label: '● LIVE CAM', pillCls: 'pill-camera', badgeTxt: '● LIVE', badgeStyle: 'background:rgba(255,95,95,0.3);color:var(--red);border:1px solid rgba(255,95,95,0.4)' },
+            video: { label: '● VIDEO', pillCls: 'pill-video', badgeTxt: '● VIDEO', badgeStyle: 'background:rgba(201,168,76,0.3);color:var(--gold);border:1px solid rgba(201,168,76,0.4)' },
+            upload: { label: '● UPLOAD', pillCls: 'pill-upload', badgeTxt: '● UPLOAD', badgeStyle: 'background:rgba(167,139,250,0.3);color:var(--purple);border:1px solid rgba(167,139,250,0.4)' },
+        };
+        let _curSrc = '{{ source_mode }}';
+
+        function updateSourceUI(src) {
+            if (src === _curSrc) return;
+            _curSrc = src;
+            const m = SRC_META[src] || SRC_META.demo;
+            const sp = document.getElementById('source-pill');
+            sp.className = 'pill ' + m.pillCls;
+            document.getElementById('source-label').textContent = m.label;
+
+            const mb = document.getElementById('mode-badge');
+            mb.textContent = m.badgeTxt;
+            mb.style.cssText = m.badgeStyle;
+
+            document.getElementById('status-text').textContent =
+                src === 'demo' ? 'DEMO' : src === 'camera' ? 'LIVE' : src.toUpperCase();
+        }
+
+        // ── Tab management ───────────────────────────────────────────────────────────
+        function showTab(tab) {
+            ['demo', 'camera', 'upload'].forEach(t => {
+                document.getElementById(`tab-${t}`).className = 'src-tab';
+                document.getElementById(`content-${t}`).classList.remove('visible');
+            });
+            document.getElementById(`tab-${tab}`).className = `src-tab active-${tab}`;
+            document.getElementById(`content-${tab}`).classList.add('visible');
+        }
+
+        // ── Source switchers ─────────────────────────────────────────────────────────
+        async function switchToDemo() {
+            const btn = document.getElementById('btn-demo');
+            btn.disabled = true; btn.textContent = 'Switching…';
+            try {
+                await fetch('/switch_demo', { method: 'POST' });
+                log('Switched to Demo mode', 'info');
+            } catch (e) { log('Switch failed: ' + e, 'warn'); }
+            btn.disabled = false; btn.textContent = '⚡ Activate Demo Mode';
+        }
+
+        async function switchToCamera() {
+            const idx = parseInt(document.getElementById('cam-index').value) || 0;
+            const btn = document.getElementById('btn-camera');
+            btn.disabled = true; btn.textContent = 'Connecting…';
+            try {
+                await fetch('/switch_camera', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ camera: idx })
+                });
+                log(`Camera ${idx} activated`, 'ok');
+            } catch (e) { log('Camera failed: ' + e, 'warn'); }
+            btn.disabled = false; btn.textContent = '▶ Start Live';
+        }
+
+        // ── Video upload ──────────────────────────────────────────────────────────────
+        let _file = null;
+
+        function handleFileSelect(file) {
+            if (!file) return;
+            _file = file;
+            document.getElementById('upload-filename').textContent = file.name;
+            document.getElementById('upload-file-info').style.display = 'flex';
+            document.getElementById('upload-progress').classList.remove('visible');
+            log(`Video selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`, 'uclr');
+        }
+
+        async function uploadVideo() {
+            if (!_file) return;
+            const btn = document.getElementById('btn-upload');
+            btn.disabled = true;
+            const prog = document.getElementById('upload-progress');
+            const bar = document.getElementById('prog-bar');
+            const label = document.getElementById('prog-label');
+            prog.classList.add('visible');
+
+            const fd = new FormData();
+            fd.append('video', _file);
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload_video');
+            xhr.upload.onprogress = e => {
+                if (e.lengthComputable) {
+                    const p = Math.round(e.loaded / e.total * 100);
+                    bar.style.width = p + '%';
+                    label.textContent = `Uploading… ${p}%`;
+                }
+            };
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    bar.style.width = '100%';
+                    label.textContent = 'Upload complete — scanning started!';
+                    log(`Scanning: ${_file.name}`, 'uclr');
+                    btn.textContent = '✓ Scanning…';
+                } else {
+                    const err = JSON.parse(xhr.responseText);
+                    label.textContent = `Error: ${err.error || 'Upload failed'}`;
+                    log(`Upload error: ${err.error}`, 'warn');
+                    btn.disabled = false; btn.textContent = '▶ Scan Video';
+                }
+            };
+            xhr.onerror = () => { label.textContent = 'Network error'; btn.disabled = false; btn.textContent = '▶ Scan Video'; };
+            xhr.send(fd);
+        }
+
+        // Drag-and-drop
+        const dz = document.getElementById('upload-drop');
+        dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+        dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+        dz.addEventListener('drop', e => {
+            e.preventDefault(); dz.classList.remove('dragover');
+            const f = e.dataTransfer.files[0];
+            if (f) { handleFileSelect(f); document.getElementById('video-file-input').files = e.dataTransfer.files; }
+        });
+
+        // ── Snapshot ──────────────────────────────────────────────────────────────────
+        async function doSnapshot() {
+            const btn = document.getElementById('btn-snap');
+            btn.disabled = true; btn.textContent = '…';
+            try {
+                const r = await fetch('/snapshot');
+                if (!r.ok) throw new Error(await r.text());
+                const blob = await r.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `snapshot_${Date.now()}.jpg`;
+                a.click();
+                URL.revokeObjectURL(url);
+                log('Snapshot saved', 'ok');
+            } catch (e) { log('Snapshot failed: ' + e, 'warn'); }
+            btn.disabled = false; btn.textContent = '📸 Snapshot';
+        }
+
+        // ── Export CSV ────────────────────────────────────────────────────────────────
+        function doExport() {
+            const a = document.createElement('a');
+            a.href = '/export';
+            a.download = `seats_${Date.now()}.csv`;
+            a.click();
+            log('CSV export downloaded', 'ok');
+        }
+
+        // ── SSE ───────────────────────────────────────────────────────────────────────
+        const sse = new EventSource('/events');
+        sse.onmessage = e => { updateStats(JSON.parse(e.data)); };
+        sse.onerror = () => log('SSE connection lost — retrying…', 'warn');
+        log('Scanner dashboard started', 'info');
+
+        // ── Fleet DB ──────────────────────────────────────────────────────────────────
+        async function loadBuses() {
+            try {
+                const r = await fetch('/buses');
+                const list = await r.json();
+                const el = document.getElementById('buses-list');
+                if (!list.length) { el.innerHTML = '<div style="color:var(--muted);font-size:11px">No buses in DB</div>'; return; }
+                el.innerHTML = '';
+                list.forEach(b => {
+                    const pct = Math.round(b.occupied / b.seats * 100) || 0;
+                    const color = pct > 80 ? 'var(--red)' : pct > 55 ? 'var(--gold)' : 'var(--green)';
+                    el.innerHTML += `<div class="db-row">
+                <div><div class="db-id">${b.id}</div><div class="db-route">${b.route || ''}</div></div>
+                <div class="db-occ" style="color:${color}">${b.occupied}/${b.seats}</div>
+            </div>`;
+                });
+                log(`Fleet: ${list.length} buses`, 'info');
+            } catch { log('DB not reachable', 'warn'); }
+        }
+        loadBuses();
+        setInterval(loadBuses, 20000);
+
+        // ── Occupancy change log ──────────────────────────────────────────────────────
+        let _lastOcc = -1;
+        setInterval(async () => {
+            try {
+                const r = await fetch('/stats');
+                const d = await r.json();
+                if (d.occupied !== _lastOcc) {
+                    log(`Occupancy: ${d.occupied}/${d.total} (${d.pct}%)`, d.pct > 80 ? 'warn' : 'ok');
+                    _lastOcc = d.occupied;
+                }
+            } catch { }
+        }, 5000);
+
+        // ── Init source tab ───────────────────────────────────────────────────────────
+        (function () {
+            const m = '{{ source_mode }}';
+            if (m === 'camera' || m === 'video') showTab('camera');
+            else if (m === 'upload') showTab('upload');
+            else showTab('demo');
+            updateSourceUI(m);
+            _curSrc = '';   // reset so first SSE push updates the UI
+            setTimeout(() => updateSourceUI(m), 100);
+        })();
+    </script>
+</body>
+
+</html>

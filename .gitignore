@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+.eslintcache
+
+# Project specific
+ai-scanner/uploads/
+ai-scanner/yolov8n.pt
+db/db-*.json
+
+# OS
+.DS_Store
+Thumbs.db

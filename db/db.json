@@ -1,0 +1,428 @@
+{
+  "users": [
+    {
+      "id": "U001",
+      "name": "Arjun Sharma",
+      "email": "arjun@bmtc.in",
+      "password": "password123",
+      "role": "user"
+    },
+    {
+      "id": "U002",
+      "name": "Admin",
+      "email": "admin@bmtc.in",
+      "password": "admin123",
+      "role": "admin"
+    }
+  ],
+  "routes": [
+    {
+      "id": "R001",
+      "name": "Majestic → Whitefield",
+      "stops": [
+        "Majestic",
+        "Shivajinagar",
+        "Indiranagar",
+        "MG Road",
+        "Whitefield"
+      ],
+      "fare": 45,
+      "buses": 4,
+      "status": "Active",
+      "duration": "75 min",
+      "distance": "28 km",
+      "path": [
+        [
+          12.978,
+          77.572
+        ],
+        [
+          12.984,
+          77.598
+        ],
+        [
+          12.979,
+          77.636
+        ],
+        [
+          12.975,
+          77.605
+        ],
+        [
+          12.97,
+          77.75
+        ]
+      ]
+    },
+    {
+      "id": "R002",
+      "name": "Kempegowda → Electronic City",
+      "stops": [
+        "Kempegowda",
+        "Silk Board",
+        "Bommanahalli",
+        "Electronic City"
+      ],
+      "fare": 35,
+      "buses": 3,
+      "status": "Active",
+      "duration": "55 min",
+      "distance": "20 km",
+      "path": [
+        [
+          12.978,
+          77.572
+        ],
+        [
+          12.917,
+          77.623
+        ],
+        [
+          12.9,
+          77.63
+        ],
+        [
+          12.845,
+          77.665
+        ]
+      ]
+    },
+    {
+      "id": "R003",
+      "name": "Yeshwanthpur → Koramangala",
+      "stops": [
+        "Yeshwanthpur",
+        "Rajajinagar",
+        "Basavanagudi",
+        "Koramangala"
+      ],
+      "fare": 40,
+      "buses": 2,
+      "status": "Active",
+      "duration": "60 min",
+      "distance": "22 km",
+      "path": [
+        [
+          13.024,
+          77.551
+        ],
+        [
+          12.997,
+          77.555
+        ],
+        [
+          12.948,
+          77.574
+        ],
+        [
+          12.934,
+          77.624
+        ]
+      ]
+    },
+    {
+      "id": "R004",
+      "name": "ITPL → Banashankari",
+      "stops": [
+        "ITPL",
+        "Marathalli",
+        "Madiwala",
+        "Jayanagar",
+        "Banashankari"
+      ],
+      "fare": 50,
+      "buses": 3,
+      "status": "Draft",
+      "duration": "70 min",
+      "distance": "30 km",
+      "path": [
+        [
+          12.987,
+          77.731
+        ],
+        [
+          12.96,
+          77.7
+        ],
+        [
+          12.921,
+          77.622
+        ],
+        [
+          12.925,
+          77.587
+        ],
+        [
+          12.917,
+          77.575
+        ]
+      ]
+    },
+    {
+      "id": "R005",
+      "name": "Majestic-Kaggalipura",
+      "stops": [
+        "Majestic",
+        "Udipalya",
+        "Kaggalipura"
+      ],
+      "fare": 50,
+      "buses": 0,
+      "status": "Active",
+      "duration": "65 min",
+      "distance": "34 km",
+      "path": [
+        [
+          12.978,
+          77.572
+        ],
+        [
+          12.984,
+          77.598
+        ],
+        [
+          12.979,
+          77.636
+        ],
+        [
+          12.97,
+          77.75
+        ]
+      ]
+    }
+  ],
+  "buses": [
+    {
+      "id": "KA-01-F-1234",
+      "route": "Majestic → Whitefield",
+      "driver": "Rajesh Kumar",
+      "driverId": "D001",
+      "seats": 40,
+      "occupied": 0,
+      "status": "On Route",
+      "scanner": "Online",
+      "eta": "8 min",
+      "seatMap": {
+        "1A": "free",
+        "1B": "free",
+        "1C": "free",
+        "1D": "free",
+        "2A": "free",
+        "2B": "free",
+        "2C": "free",
+        "2D": "free",
+        "3A": "free",
+        "3B": "free",
+        "3C": "free",
+        "3D": "free",
+        "4A": "free",
+        "4B": "free",
+        "4C": "free",
+        "4D": "free",
+        "5A": "free",
+        "5B": "free",
+        "5C": "free",
+        "5D": "free",
+        "6A": "free",
+        "6B": "free",
+        "6C": "free",
+        "6D": "free",
+        "7A": "free",
+        "7B": "free",
+        "7C": "free",
+        "7D": "free",
+        "8A": "free",
+        "8B": "free",
+        "8C": "free",
+        "8D": "free",
+        "9A": "free",
+        "9B": "free",
+        "9C": "free",
+        "9D": "free"
+      }
+    },
+    {
+      "id": "KA-02-G-5678",
+      "route": "Kempegowda → Electronic City",
+      "driver": "Venkat Rao",
+      "driverId": "D002",
+      "seats": 40,
+      "occupied": 15,
+      "status": "On Route",
+      "scanner": "Online",
+      "eta": "12 min"
+    },
+    {
+      "id": "KA-03-H-9012",
+      "route": "Yeshwanthpur → Koramangala",
+      "driver": "Suresh Nair",
+      "driverId": "D003",
+      "seats": 36,
+      "occupied": 36,
+      "status": "Full",
+      "scanner": "Online",
+      "eta": "3 min"
+    },
+    {
+      "id": "KA-04-J-3456",
+      "route": "Majestic → Whitefield",
+      "driver": "Mohan Das",
+      "driverId": "D004",
+      "seats": 40,
+      "occupied": 5,
+      "status": "Starting",
+      "scanner": "Offline",
+      "eta": "22 min"
+    },
+    {
+      "id": "KA-05-K-7890",
+      "route": "Kempegowda → Electronic City",
+      "driver": "Prakash B",
+      "driverId": "D005",
+      "seats": 36,
+      "occupied": 20,
+      "status": "On Route",
+      "scanner": "Online",
+      "eta": "18 min"
+    },
+    {
+      "id": "KA-06-L-1122",
+      "route": "Yeshwanthpur → Koramangala",
+      "driver": "Ravi Kumar",
+      "driverId": "D006",
+      "seats": 40,
+      "occupied": 0,
+      "status": "Depot",
+      "scanner": "Offline",
+      "eta": "--"
+    },
+    {
+      "id": "KA-02M7859",
+      "route": "Majestic-Kaggalipura",
+      "driver": "Raju",
+      "driverId": "D0025",
+      "seats": 60,
+      "occupied": 1,
+      "status": "On Route",
+      "scanner": "Online",
+      "eta": "--",
+      "seatMap": {
+        "1A": "occupied",
+        "1B": "free",
+        "1C": "free",
+        "1D": "free",
+        "2A": "free",
+        "2B": "free",
+        "2C": "free",
+        "2D": "free",
+        "3A": "free",
+        "3B": "free",
+        "3C": "free",
+        "3D": "free",
+        "4A": "free",
+        "4B": "free",
+        "4C": "free",
+        "4D": "free",
+        "5A": "free",
+        "5B": "free",
+        "5C": "free",
+        "5D": "free",
+        "6A": "free",
+        "6B": "free",
+        "6C": "free",
+        "6D": "free",
+        "7A": "free",
+        "7B": "free",
+        "7C": "free",
+        "7D": "free",
+        "8A": "free",
+        "8B": "free",
+        "8C": "free",
+        "8D": "free",
+        "9A": "free",
+        "9B": "free",
+        "9C": "free",
+        "9D": "free"
+      }
+    }
+  ],
+  "staff": [
+    {
+      "id": "S001",
+      "name": "Rajesh Kumar",
+      "role": "Driver",
+      "bus": "KA-01-F-1234",
+      "shift": "Morning",
+      "rating": 4.8,
+      "status": "Active"
+    },
+    {
+      "id": "S002",
+      "name": "Venkat Rao",
+      "role": "Driver",
+      "bus": "KA-02-G-5678",
+      "shift": "Morning",
+      "rating": 4.5,
+      "status": "Active"
+    },
+    {
+      "id": "S003",
+      "name": "Suresh Nair",
+      "role": "Driver",
+      "bus": "KA-03-H-9012",
+      "shift": "Evening",
+      "rating": 4.7,
+      "status": "Active"
+    },
+    {
+      "id": "S004",
+      "name": "Anita Singh",
+      "role": "Conductor",
+      "bus": "KA-01-F-1234",
+      "shift": "Morning",
+      "rating": 4.9,
+      "status": "Active"
+    },
+    {
+      "id": "S005",
+      "name": "Mohan Das",
+      "role": "Driver",
+      "bus": "KA-04-J-3456",
+      "shift": "Night",
+      "rating": 4.2,
+      "status": "Active"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "BK001",
+      "route": "Majestic → Whitefield",
+      "bus": "KA-01-F-1234",
+      "seat": "12A",
+      "date": "Today, 6:30 PM",
+      "fare": 45,
+      "status": "Confirmed",
+      "user": "arjun@bmtc.in"
+    },
+    {
+      "id": "BK002",
+      "route": "Kempegowda → Electronic City",
+      "bus": "KA-02-G-5678",
+      "seat": "5B",
+      "date": "Tomorrow, 8:00 AM",
+      "fare": 35,
+      "status": "Upcoming",
+      "user": "arjun@bmtc.in"
+    },
+    {
+      "id": "BK003",
+      "route": "Yeshwanthpur → Koramangala",
+      "bus": "KA-03-H-9012",
+      "seat": "23A",
+      "date": "Feb 18, 5:00 PM",
+      "fare": 40,
+      "status": "Completed",
+      "user": "arjun@bmtc.in"
+    }
+  ]
+}
